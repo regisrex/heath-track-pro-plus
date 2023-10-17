@@ -77,7 +77,6 @@ app.delete('/patients/:id', (req, res) => {
 });
 
 
-// Create a new record
 app.post('/records', (req, res) => {
     const { heart_rate, body_temperature } = req.body;
     db.run('INSERT INTO record (heart_rate, body_temperature) VALUES (?, ?)',
@@ -90,7 +89,6 @@ app.post('/records', (req, res) => {
         });
 });
 
-// Get all records
 app.get('/records', (req, res) => {
     db.all('SELECT * FROM record', (err, rows) => {
         if (err) {
@@ -100,7 +98,6 @@ app.get('/records', (req, res) => {
     });
 });
 
-// Get a specific record by ID
 app.get('/records/:id', (req, res) => {
     const id = req.params.id;
     db.get('SELECT * FROM record WHERE patient_id = ?', [id], (err, row) => {
@@ -114,7 +111,6 @@ app.get('/records/:id', (req, res) => {
     });
 });
 
-// Update a record by ID
 app.put('/records/:id', (req, res) => {
     const id = req.params.id;
     const { heart_rate, body_temperature } = req.body;
