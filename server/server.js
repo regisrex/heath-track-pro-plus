@@ -8,7 +8,7 @@ const db = new sqlite3.Database('patients.db');
 
 
 db.run('CREATE TABLE IF NOT EXISTS patients (id INTEGER PRIMARY KEY AUTOINCREMENT, patient_name TEXT, patient_national_id TEXT, frequent_sickness TEXT)');
-db.run('CREATE TABLE IF NOT EXISTS record (patient_id INTEGER PRIMARY KEY AUTOINCREMENT, heart_rate INTEGER, body_temperature REAL)');
+db.run('CREATE TABLE IF NOT EXISTS record (patient_id INTEGER, heart_rate INTEGER, body_temperature REAL)');
 
 
 app.post('/patients', (req, res) => {
@@ -78,9 +78,9 @@ app.delete('/patients/:id', (req, res) => {
 
 
 app.post('/records', (req, res) => {
-    const { heart_rate, body_temperature } = req.body;
-    db.run('INSERT INTO record (heart_rate, body_temperature) VALUES (?, ?)',
-        [heart_rate, body_temperature],
+    const { patient_id, heart_rate, body_temperature } = req.body;
+    db.run('INSERT INTO record (patient_id, heart_rate, body_temperature) VALUES (? , ?, ?)',
+        [patient_id, heart_rate, body_temperature],
         function (err) {
             if (err) {
                 return res.status(500).json({ error: err.message });
@@ -98,9 +98,11 @@ app.get('/records', (req, res) => {
     });
 });
 
-app.get('/records/:id', (req, res) => {
-    const id = req.params.id;
-    db.get('SELECT * FROM record WHERE patient_id = ?', [id], (err, row) => {
+    
+
+app.get('/records/:patient_id', (req, res) => {
+    const { patient_id } = req.params;
+    db.get('SELECT * FROM record WHERE patient_id = ?', [patient_id], (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
